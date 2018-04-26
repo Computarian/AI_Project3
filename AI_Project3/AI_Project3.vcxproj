@@ -126,6 +126,9 @@
     <ClInclude Include="Options.hpp" />
     <ClInclude Include="Synapse.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="iris.data" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
