@@ -4,7 +4,7 @@
 
 #include "Synapse.hpp"
 #include <vector>
-
+#include <time.h>
 
 class Neuron {
 
@@ -27,13 +27,13 @@ public:
 	double calculateDerivative();
 	double sigmoidDerivative();
 	double tangentDerivative();
-	int numberOfSynapses();
+	int getNumberOfSynapses();
 
 private:
 	double summed_value_ = 0.0;
 	double computed_value_ = 0.0;
 	std::vector<Synapse*> synapses_;
-
+	int number_of_synapses_;
 };
 
 #endif //NEURON_HPP

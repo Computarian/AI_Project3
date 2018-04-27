@@ -4,7 +4,11 @@
 #include "NeuralNetwork.hpp"
 
 int main() {
-	NeuralNetwork* neural_net = new NeuralNetwork();
+	srand((unsigned int)time(NULL));
+
+	int num_inputs = 4;
+	int num_hidden_layers = 2;
+	NeuralNetwork* neural_net = new NeuralNetwork(num_inputs, num_hidden_layers);
 	std::string input;
 
 	do {
@@ -14,6 +18,9 @@ int main() {
 		getline(std::cin, input);
 
 		if (input == "1") {
+			neural_net->printNetwork();
+			neural_net->testSum();
+
 			neural_net->printResults();
 		}
 
