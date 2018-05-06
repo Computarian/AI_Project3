@@ -11,6 +11,9 @@ int main() {
 	NeuralNetwork* neural_net = new NeuralNetwork(num_inputs, num_hidden_layers);
 	std::string input;
 
+	neural_net->readData();
+	neural_net->printData();
+
 	do {
 		input = "";
 		std::cout << "1. Neural Network" << std::endl;

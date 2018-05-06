@@ -39,8 +39,8 @@ NeuralNetwork::NeuralNetwork(int num_inputs, int num_hidden_layers){
 
 	// initializing synapse weights hidden layers
 	for (int i = 0; i < num_hidden_layers_ - 1; i++) {
-		for (int j = 0; j < hidden_layers_[i].size(); j++) {
-			for (int k = 0; k < hidden_layers_[i+1].size(); k++) {
+		for (unsigned int j = 0; j < hidden_layers_[i].size(); j++) {
+			for (unsigned int k = 0; k < hidden_layers_[i+1].size(); k++) {
 				hidden_layers_[i][j]->addSynapse((double)rand() / (RAND_MAX));
 				hidden_layers_[i][j]->getSynapse(k)->setTo(hidden_layers_[i + 1][k]);
 			}
@@ -48,11 +48,65 @@ NeuralNetwork::NeuralNetwork(int num_inputs, int num_hidden_layers){
 	}
 	
 	// initializing synapse weights to output layer
-	for (int i = 0; i < hidden_layers_.back().size(); i++) {
+	for (unsigned int i = 0; i < hidden_layers_.back().size(); i++) {
 		for (int j = 0; j < num_outputs_; j++) {
 			hidden_layers_.back()[i]->addSynapse((double)rand() / (RAND_MAX));
 			hidden_layers_.back()[i]->getSynapse(j)->setTo(output_layer_[j]);
 		}
+	}
+}
+
+
+void NeuralNetwork::readData() {
+	//The name of our file
+	const std::string data = "iris.data";
+
+	//Our input file stream
+	std::ifstream inputFile(data.c_str());
+	//Make sure it opened correctly
+	if (inputFile.is_open()) {
+		//Buffer that will store a single line from the file
+		std::string lineFromFile;
+
+		//Read the first line from the file, store in "lineFromFile"
+		while (getline(inputFile, lineFromFile)) {
+			//Buffer that will store a single piece of data from our line
+			std::string token;
+
+			//Stores the converted tokens
+			std::vector<double> data_row;
+
+			//Create a stringstream using the line we got from the file
+			std::stringstream myStream(lineFromFile);
+
+			// Only want the first 4 values from the data set (5th is flower name)
+			int counter = 0;
+			//Loop until we have parsed this entire line
+			while (getline(myStream, token, ',')) {
+				//Store the converted data in the appropriate position in our array
+				if (counter < 4) {
+					double datum = stod(token);
+					data_row.push_back(datum);
+				}
+				counter++;
+			}
+			counter = 0;
+			this->data_set_.push_back(data_row);
+			data_row.clear();
+		}
+	}
+	inputFile.close();
+}
+
+
+void NeuralNetwork::printData() {
+	for (unsigned int i = 0; i < data_set_.size() - 1; i++) {
+		std::cout << i << ": ";
+		for (unsigned int j = 0; j < data_set_[i].size(); j++) {
+			std::cout << std::setprecision(1) << std::fixed;
+			std::cout << data_set_[i][j] << " ";
+		}
+		std::cout << std::endl;
 	}
 }
 
@@ -81,7 +135,7 @@ void NeuralNetwork::printNetwork() {
 		std::cout << "Hidden Layer " << i << std::endl;
 		// im a stub
 		std::cout << "Synapse weights to Hidden Layer " << i+1 << std::endl;
-		for (int j = 0; j < hidden_layers_[i].size(); j++) {
+		for (unsigned int j = 0; j < hidden_layers_[i].size(); j++) {
 			for (int k = 0; k < hidden_layers_[i][j]->getNumberOfSynapses(); k++) {
 				std::cout << "H" << i << ": N" << j << ": Synapse " << k << ": Weight ";
 				std::cout << hidden_layers_[i][j]->getSynapse(k)->getWeight() << std::endl;
@@ -92,7 +146,7 @@ void NeuralNetwork::printNetwork() {
 	std::cout << "Hidden Layer " << hidden_layers_.size() - 1 << std::endl;
 	//im a stub
 	std::cout << "Synapses weights to Output Layer" << std::endl;
-	for (int i = 0; i < hidden_layers_.back().size(); i++) {	
+	for (unsigned int i = 0; i < hidden_layers_.back().size(); i++) {	
 		for (int j = 0; j < num_outputs_; j++) {
 			std::cout << "H"<< hidden_layers_.size() - 1 <<": N" << i << ": Synapse " << j << ": Weight ";
 			std::cout << hidden_layers_.back()[i]->getSynapse(j)->getWeight() << std::endl;
