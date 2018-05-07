@@ -3,9 +3,8 @@
 
 class Options {
 public:
-	// number of input, output, and hidden neurons
+	// number of input and hidden neurons
 	static const int num_inputs = 4;
-	static const int num_outputs = 4;
 	static const int num_hidden = 5;
 	// number of hidden layers
 	static const int num_hidden_layers = 2;

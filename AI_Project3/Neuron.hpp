@@ -12,7 +12,6 @@ class Neuron {
 
 public:
 	Neuron();
-	Neuron(int numSynapses);
 	double getSummedValue();
 	double getComputedValue();
 	double getOutputValue();
@@ -28,7 +27,6 @@ public:
 	int classify();
 
 	double calculateDerivative();
-	double sigmoidDerivative();
 	double tangentDerivative();
 	int getNumberOfSynapses();
 

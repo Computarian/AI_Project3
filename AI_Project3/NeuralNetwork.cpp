@@ -4,7 +4,6 @@
 
 NeuralNetwork::NeuralNetwork(){
 	this->num_inputs_ = Options::num_inputs;
-	this->num_outputs_ = Options::num_outputs;
 	this->num_hidden_ = Options::num_hidden;
 	this->num_hidden_layers_ = Options::num_hidden_layers;
 
@@ -27,11 +26,8 @@ NeuralNetwork::NeuralNetwork(){
 		}
 	}
 
-	// initializing output layers
-	for (int i = 0; i < num_outputs_; i++) {
-		Neuron* output_neuron = new Neuron();
-		output_layer_.push_back(output_neuron);
-	}
+	// initializing output
+	this->output_layer_ = new Neuron();
 
 	// initializing synapse weights input layer to first hidden layer
 	for (int i = 0; i < num_inputs_; i++) {
@@ -52,11 +48,9 @@ NeuralNetwork::NeuralNetwork(){
 	}
 	
 	// initializing synapse weights from final hidden layer to output layer
-	for (unsigned int i = 0; i < hidden_layers_.back().size(); i++) {
-		for (int j = 0; j < num_outputs_; j++) {
+	for (int i = 0; i < num_hidden_; i++) {
 			hidden_layers_.back()[i]->addSynapse((double)rand() / (RAND_MAX));
-			hidden_layers_.back()[i]->getSynapse(j)->setTo(output_layer_[j]);
-		}
+			hidden_layers_.back()[i]->getSynapse(0)->setTo(output_layer_);
 	}
 }
 
@@ -101,12 +95,15 @@ void NeuralNetwork::readData() {
 			// classifying iris data set
 			if (sum_data_ < 50) {
 				classes_.push_back(1);
+				target_values_.push_back(-1);
 			}
 			else if (sum_data_ < 100) {
 				classes_.push_back(2);
+				target_values_.push_back(0);
 			}
 			else {
 				classes_.push_back(3);
+				target_values_.push_back(1);
 			}
 			this->sum_data_++;
 		}
@@ -117,6 +114,11 @@ void NeuralNetwork::readData() {
 
 std::vector<std::vector<double>> NeuralNetwork::getData() {
 	return this->data_set_;
+}
+
+
+std::vector<double> NeuralNetwork::getTargetValues() {
+	return this->target_values_;
 }
 
 
@@ -160,18 +162,13 @@ void NeuralNetwork::printNetwork() {
 	}
 	std::cout << "Synapses weights to Output Layer" << std::endl;
 	for (int i = 0; i < num_hidden_; i++) {
-		for (int j = 0; j < num_outputs_; j++) {
-			std::cout << "H" << num_hidden_layers_ - 1 << ": N" << i << ": Synapse " << j << ": Weight ";
-			std::cout << hidden_layers_.back()[i]->getSynapse(j)->getWeight() << std::endl;
-		}
-		std::cout << std::endl;
+		std::cout << "H" << num_hidden_layers_ - 1 << ": N" << i << ": Synapse " << 0 << ": Weight ";
+		std::cout << hidden_layers_.back()[i]->getSynapse(0)->getWeight() << std::endl;
 	}
-
-	std::cout << "Output Layer Values" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Output Layer Value" << std::endl;
 	// prints values of output layer
-	for (int i = 0; i < num_outputs_; i++) {
-		std::cout << "O: N" << i << " " << output_layer_[i]->getOutputValue() << std::endl;
-	}
+	std::cout << "O: N0: " << output_layer_->getOutputValue() << std::endl;
 	std::cout << std::endl;
 }
 
@@ -179,7 +176,7 @@ void NeuralNetwork::printNetwork() {
 void NeuralNetwork::printData() {
 	for (int i = 0; i < sum_data_ - 1; i++) {
 		std::cout << std::right << std::setw(3) << std::setfill(' ');
-		std::cout << i << ": " << "Class: " << classes_[i] << " Data: ";
+		std::cout << i << ": " << "Class: " << classes_[i] << " Target: "<< target_values_[i] << " Data: ";
 		for (int j = 0; j < num_inputs_; j++) {
 			std::cout << std::setprecision(1) << std::fixed;
 			std::cout <<data_set_[i][j] << " ";
@@ -228,24 +225,34 @@ void NeuralNetwork::feedForward(std::vector<double> &input_values) {
 			}
 		}
 	}
-	// calculate output layer values
-	for (int i = 0; i < num_outputs_; i++) {
-		for (int j = 0; j < num_hidden_; j++) {
-			double value = hidden_layers_.back()[j]->getSynapse(i)->getWeight() * hidden_layers_.back()[j]->getOutputValue();
-			//std::cout << "current synapse * previous layer value " << value << std::endl;
-			output_layer_[i]->addToSum(value);
-		}
-		if (Options::debug) {
-			std::cout << "O N: "<<i<<": Before Activation " << output_layer_[i]->getSummedValue() << std::endl;
-		}
-		output_layer_[i]->computeValue();
-		if (Options::debug) {
-			std::cout << "O N: " << i << ": After Activation " << output_layer_[i]->getComputedValue() << std::endl;
-		}
+	// calculate output layer value
+	for (int i = 0; i < num_hidden_; i++) {
+		double value = hidden_layers_.back()[i]->getSynapse(0)->getWeight() * hidden_layers_.back()[i]->getOutputValue();
+		//std::cout << "current synapse * previous layer value " << value << std::endl;
+		output_layer_->addToSum(value);
 	}
+	if (Options::debug) {
+		std::cout << "O N: " << 0 << ": Before Activation " << output_layer_->getSummedValue() << std::endl;
+	}
+	output_layer_->computeValue();
+	if (Options::debug) {
+		std::cout << "O N: " << 0 << ": After Activation " << output_layer_->getComputedValue() << std::endl;
+	}
+	// store the output value in current output for now
+	current_output_ = output_layer_->getComputedValue();
 }
 
 
-void NeuralNetwork::backPropagation() {
+void NeuralNetwork::backPropagation(double target_value) {
+	// calculate error
+	double error = target_value - current_output_;
+	std::cout << "error is " << error << std::endl;
 
+	// calculate output layer gradients
+
+	// calculate gradients on hidden layers
+
+	// for all layers from outputs to first hidden layer
+
+	// update synapse weights
 }

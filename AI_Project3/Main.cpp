@@ -11,9 +11,11 @@ int main() {
 
 	//testing single epoch in network
 	std::vector<double> test_input = neural_net->getData()[0];
+	double target = neural_net->getTargetValues()[0];
 	neural_net->feedForward(test_input);
+	neural_net->backPropagation(target);
 	if (Options::debug) {
-		neural_net->printNetwork();
+		//neural_net->printNetwork();
 		//neural_net->printData();
 	}
 	
@@ -25,9 +27,6 @@ int main() {
 
 		if (input == "1") {
 			neural_net->printNetwork();
-			neural_net->testSum();
-
-			neural_net->printResults();
 		}
 
 	} while (input != "q");

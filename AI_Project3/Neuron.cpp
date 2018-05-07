@@ -76,6 +76,12 @@ int Neuron::classify() {
 }
 
 
+double Neuron::tangentDerivative() {
+	double tanh = tangentActivationFunction();
+	return 1.0 - tanh * tanh;
+}
+
+
 int Neuron::getNumberOfSynapses() {
 	return this->number_of_synapses_;
 }
