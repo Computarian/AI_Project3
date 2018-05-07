@@ -25,19 +25,18 @@ public:
 	void printNetwork();
 	void printData();
 
-	void testSum();
-	void printResults();
-	
 private:
 	int num_inputs_;
 	int num_outputs_;
 	int num_hidden_;
 	int num_hidden_layers_;
+	int total_layers_; 
 	int sum_data_;
 	std::vector<Neuron*> input_layer_;
 	std::vector<Neuron*> output_layer_;
 	std::vector<std::vector<Neuron*>> hidden_layers_;
 	std::vector<std::vector<double>> data_set_;
+	std::vector<int> classes_;
 
 };
 

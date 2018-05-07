@@ -52,6 +52,30 @@ void Neuron::addToSum(double value) {
 }
 
 
+double Neuron::tangentActivationFunction() {
+	return tanh(this->summed_value_);
+}
+
+
+void Neuron::computeValue() {
+	this->computed_value_ = tangentActivationFunction();
+	this->output_value_ = computed_value_;
+}
+
+
+int Neuron::classify() {
+	if (computed_value_ < -0.66) {
+		return 1;
+	}
+	else if (computed_value_ < 0.33) {
+		return 2;
+	}
+	else {
+		return 3;
+	}
+}
+
+
 int Neuron::getNumberOfSynapses() {
 	return this->number_of_synapses_;
 }

@@ -17,7 +17,6 @@ int main() {
 		//neural_net->printData();
 	}
 	
-
 	do {
 		input = "";
 		std::cout << "1. Neural Network" << std::endl;

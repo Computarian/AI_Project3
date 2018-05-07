@@ -5,6 +5,8 @@
 #include "Synapse.hpp"
 #include <vector>
 #include <time.h>
+#include <cmath>
+
 
 class Neuron {
 
@@ -22,9 +24,8 @@ public:
 
 	void addToSum(double value);
 	double tangentActivationFunction();
-	double sigmoidActivationFunction();
 	void computeValue();
-	double classify();
+	int classify();
 
 	double calculateDerivative();
 	double sigmoidDerivative();
