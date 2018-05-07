@@ -1,18 +1,22 @@
 // Michael Sousa COMP 470 Project 3
 
-
 #include "NeuralNetwork.hpp"
+
 
 int main() {
 	srand((unsigned int)time(NULL));
 
-	int num_inputs = 4;
-	int num_hidden_layers = 2;
-	NeuralNetwork* neural_net = new NeuralNetwork(num_inputs, num_hidden_layers);
+	NeuralNetwork* neural_net = new NeuralNetwork();
 	std::string input;
 
-	neural_net->readData();
-	neural_net->printData();
+	//testing single epoch in network
+	std::vector<double> test_input = neural_net->getData()[0];
+	neural_net->feedForward(test_input);
+	if (Options::debug) {
+		neural_net->printNetwork();
+		//neural_net->printData();
+	}
+	
 
 	do {
 		input = "";

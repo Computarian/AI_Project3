@@ -37,11 +37,6 @@ void Neuron::addSynapse(double weight) {
 }
 
 
-void Neuron::setSummedValue(double weight) {
-	this->summed_value_ = weight;
-}
-
-
 void Neuron::setOutputValue(double weight) {
 	this->output_value_ = weight;
 }

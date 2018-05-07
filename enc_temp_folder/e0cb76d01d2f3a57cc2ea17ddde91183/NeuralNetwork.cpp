@@ -180,11 +180,6 @@ void NeuralNetwork::feedForward(std::vector<double> &input_values) {
 	for (int i = 0; i < num_inputs_; i++) {
 		input_layer_[i]->setOutputValue(input_values[i]);
 	}
-
-	// loop through hidden layers
-	for (int i = 0; i < num_hidden_layers_; i++) {
-
-	}
 }
 
 
