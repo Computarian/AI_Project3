@@ -17,10 +17,17 @@ public:
 
 	void readData();
 	std::vector<std::vector<double>> getData();
+	std::vector<int> getClasses();
 	std::vector<double> getTargetValues();
 
 	void feedForward(std::vector<double> &input_values);
 	void backPropagation(double target_value);
+
+	// train neural net by running feed forward and then back propagation
+	void trainNeuralNet(std::vector<double> &input_values, double target_value);
+	// test neural net by using feed forward after training and classifying output
+	void testNeuralNet(std::vector<double> &input_values, int actual_class);
+
 	void getResults();
 
 	void printNetwork();
@@ -32,7 +39,6 @@ private:
 	int num_hidden_layers_;
 	int total_layers_; 
 	int sum_data_;
-	double current_output_;
 
 	std::vector<Neuron*> input_layer_;
 	Neuron* output_layer_;
@@ -40,6 +46,9 @@ private:
 	std::vector<std::vector<double>> data_set_;
 	std::vector<int> classes_;
 	std::vector<double> target_values_;
+	std::vector<double> delta_output_;
+	std::vector<std::vector<std::vector<double>>> delta_hidden_;
+	std::vector<std::vector<double>> delta_input_;
 };
 
 #endif //NEURAL_NETWORK_HPP

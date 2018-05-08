@@ -32,7 +32,7 @@ NeuralNetwork::NeuralNetwork(){
 	// initializing synapse weights input layer to first hidden layer
 	for (int i = 0; i < num_inputs_; i++) {
 		for (int j = 0; j < num_hidden_; j++) {
-			input_layer_[i]->addSynapse((double)rand() / (RAND_MAX));
+			input_layer_[i]->addSynapse(-1 + 2 * ((double)rand()) / RAND_MAX);
 			input_layer_[i]->getSynapse(j)->setTo(hidden_layers_[0][j]);
 		}
 	}
@@ -41,7 +41,7 @@ NeuralNetwork::NeuralNetwork(){
 	for (int i = 0; i < num_hidden_layers_ - 1; i++) {
 		for (unsigned int j = 0; j < hidden_layers_[i].size(); j++) {
 			for (unsigned int k = 0; k < hidden_layers_[i+1].size(); k++) {
-				hidden_layers_[i][j]->addSynapse((double)rand() / (RAND_MAX));
+				hidden_layers_[i][j]->addSynapse(-1 + 2 * ((double)rand()) / RAND_MAX);
 				hidden_layers_[i][j]->getSynapse(k)->setTo(hidden_layers_[i + 1][k]);
 			}
 		}
@@ -49,7 +49,7 @@ NeuralNetwork::NeuralNetwork(){
 	
 	// initializing synapse weights from final hidden layer to output layer
 	for (int i = 0; i < num_hidden_; i++) {
-			hidden_layers_.back()[i]->addSynapse((double)rand() / (RAND_MAX));
+			hidden_layers_.back()[i]->addSynapse(-1 + 2 * ((double)rand()) / RAND_MAX);
 			hidden_layers_.back()[i]->getSynapse(0)->setTo(output_layer_);
 	}
 }
@@ -114,6 +114,11 @@ void NeuralNetwork::readData() {
 
 std::vector<std::vector<double>> NeuralNetwork::getData() {
 	return this->data_set_;
+}
+
+
+std::vector<int> NeuralNetwork::getClasses() {
+	return this->classes_;
 }
 
 
@@ -238,21 +243,112 @@ void NeuralNetwork::feedForward(std::vector<double> &input_values) {
 	if (Options::debug) {
 		std::cout << "O N: " << 0 << ": After Activation " << output_layer_->getComputedValue() << std::endl;
 	}
-	// store the output value in current output for now
-	current_output_ = output_layer_->getComputedValue();
 }
 
 
 void NeuralNetwork::backPropagation(double target_value) {
+	// clear vectors of deltas
+	delta_output_.clear();
+	delta_hidden_.clear();
+	delta_input_.clear();
+
 	// calculate error
-	double error = target_value - current_output_;
-	std::cout << "error is " << error << std::endl;
+	double error = target_value - output_layer_->getOutputValue();
+	if (Options::debug) {
+		std::cout << "Error is " << error << std::endl;
+	}
+	// tanh derivative of output layer output value
+	double deriv_output = output_layer_->tangentDerivative();
+	//std::cout << "output tangent derivative is " << deriv_output << std::endl;
 
-	// calculate output layer gradients
+	// calculate output layer deltas	
+	for (int i = 0; i < num_hidden_; i++) {
+		double delta_old_weight = deriv_output / hidden_layers_.back()[i]->getOutputValue();
+		delta_output_.push_back(delta_old_weight);
+	}
+	
+	// calculate hidden layer deltas
+	/*
+	for (int i = 0; i < num_hidden_layers_ - 1; i++) {
+		std::vector <std::vector<double>> layer_deltas;
+		delta_hidden_.push_back(layer_deltas);
 
-	// calculate gradients on hidden layers
+		for (int j = 0; j < num_hidden_; j++) {
 
+			for (int k = 0; k < hidden_layers_[i + 1][j]->getNumberOfSynapses(); k++) {
+				double delta_hidden_to_hidden =
+					(deriv_output / hidden_layers_.back()[j]->getSynapse(k)->getWeight())
+					* (1.0 - tanh(hidden_layers_[i][j]->getSynapse(k)->getWeight()) * tanh(hidden_layers_[i][j]->getSynapse(k)->getWeight()));
+				delta_hidden_[i][j].push_back(delta_hidden_to_hidden);
+			}
+		}
+	}
+	*/
+	// calculate input layer deltas
+	for (int i = 0; i < num_inputs_; i++) {
+		std::vector<double> delta_input_synapses;
+		delta_input_.push_back(delta_input_synapses);
+
+		for (int j = 0; j < num_hidden_; j++) {
+			double delta_input_hidden =
+				(deriv_output / hidden_layers_[0][j]->getSynapse(0)->getWeight())
+				* (1.0 - tanh(input_layer_[i]->getSynapse(j)->getWeight()) * tanh(input_layer_[i]->getSynapse(j)->getWeight()));
+			delta_input_[i].push_back(delta_input_hidden);
+		}
+	}
+	// print input layer to first hidden layer deltas
+	/*
+	for (unsigned int i = 0; i < delta_input_.size(); i++) {
+		for (unsigned int j = 0; j < delta_input_[i].size(); j++) {
+			std::cout << "I N" << i << ": Synapse" << j << ": delta input hidden " << delta_input_[i][j] << std::endl;
+		}
+	}
+	*/
 	// for all layers from outputs to first hidden layer
-
 	// update synapse weights
+	// update synapse weights final hidden layer to output
+	for (int i = 0; i < num_hidden_; i++) {
+		double new_output_weight = hidden_layers_.back()[i]->getOutputValue() + delta_output_[i];
+		if (Options::debug) {
+			std::cout << "O N:" << i << " Old synapse weight to output: " << hidden_layers_.back()[i]->getSynapse(0)->getWeight() << std::endl;
+		}
+		hidden_layers_.back()[i]->getSynapse(0)->setWeight(new_output_weight);
+		if (Options::debug) {
+			std::cout << "O N:" << i << " New synapse weight to output: " << hidden_layers_.back()[i]->getSynapse(0)->getWeight() << std::endl;
+		}
+	}
+	// update synapse weights between hidden layers
+	/*
+	for (int i = num_hidden_layers_ - 1; ) {
+		for (int j = 0; j < num_hidden_; j++) {
+			for (int k = 0; k < hidden_layers_[i][j]->getNumberOfSynapses(); k++) {
+				double delta_hidden_weight = delta_hidden_[i][j][k] / 
+			}
+		}
+	}
+	*/
+	// update synapse weights between input and first hidden layer
+	for (int i = 0; i < num_inputs_; i++) {
+		for (int j = 0; j < input_layer_[i]->getNumberOfSynapses(); j++) {
+			// delta input to hidden weight = delta input to hidden / input value
+			double delta_input_synapse_weight = (delta_input_[i][j] / input_layer_[i]->getOutputValue());
+			// new input to hidden weight = old input to hidden weight + delta input to hidden weight
+			double new_input_synapse_weight = input_layer_[i]->getSynapse(j)->getWeight() + delta_input_synapse_weight;
+			// update synapse between input and first hidden layer
+			input_layer_[i]->getSynapse(j)->setWeight(new_input_synapse_weight);
+		}
+	}
+}
+
+
+void NeuralNetwork::trainNeuralNet(std::vector<double> &input_values, double target_value) {
+		feedForward(input_values);
+		backPropagation(target_value);
+}
+
+
+void NeuralNetwork::testNeuralNet(std::vector<double> &input_values, int actual_class) {
+	feedForward(input_values);
+	int class_guess = output_layer_->classify();
+	std::cout << "Class: " << actual_class << " Neural Net's guess: " << class_guess << std::endl;
 }
