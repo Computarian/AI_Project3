@@ -22,6 +22,7 @@ public:
 
 	void feedForward(std::vector<double> &input_values);
 	void backPropagation(double target_value);
+	void clearNeuralNetworkValues();
 
 	// train neural net by running feed forward and then back propagation
 	void trainNeuralNet(std::vector<double> &input_values, double target_value);

@@ -29,6 +29,7 @@ int main() {
 			std::cout << "Network after training on class 1 data (Target -1)" << std::endl;
 			neural_net->printNetwork();
 		}
+		/*
 		// train on second class of data
 		neural_net->trainNeuralNet(neural_net->getData()[i + 50], neural_net->getTargetValues()[i + 50]);
 		if (i == Options::epochs - 1) {
@@ -41,9 +42,11 @@ int main() {
 			std::cout << "Network after training on class 3 data (Target 1)" << std::endl;
 			neural_net->printNetwork();
 		}
+		*/
 	}
 	
 	// test data
+	/*
 	for (int i = 0; i < Options::test_net; i++) {
 		// test on first class of data
 		neural_net->testNeuralNet(neural_net->getData()[Options::epochs + i], neural_net->getClasses()[Options::epochs + i]);
@@ -52,6 +55,7 @@ int main() {
 		// test on third class of data
 		neural_net->testNeuralNet(neural_net->getData()[Options::epochs + i + 100], neural_net->getClasses()[Options::epochs + i + 100]);
 	}
+	*/
 	/*
 	// debug for first class
 	for (int i = 0; i < Options::epochs; i++) {

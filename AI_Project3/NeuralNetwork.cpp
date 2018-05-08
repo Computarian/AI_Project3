@@ -341,9 +341,21 @@ void NeuralNetwork::backPropagation(double target_value) {
 }
 
 
+void NeuralNetwork::clearNeuralNetworkValues() {
+	// input layer gets new inputs so we can leave it alone here
+	for (int i = 0; i < num_hidden_layers_; i++) {
+		for (int j = 0; j < num_hidden_; j++) {
+			hidden_layers_[i][j]->setSummedValue(0);
+		}
+	}
+	output_layer_->setSummedValue(0);
+}
+
+
 void NeuralNetwork::trainNeuralNet(std::vector<double> &input_values, double target_value) {
 		feedForward(input_values);
 		backPropagation(target_value);
+		clearNeuralNetworkValues();
 }
 
 
