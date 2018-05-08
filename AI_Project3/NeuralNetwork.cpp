@@ -210,7 +210,7 @@ void NeuralNetwork::feedForward(std::vector<double> &input_values) {
 		}
 		hidden_layers_[0][i]->computeValue();
 		if (Options::debug) {
-			std::cout << "H" << 0 << ": N" << i << ": After Activation " << hidden_layers_[0][i]->getComputedValue() << std::endl;
+			std::cout << "H" << 0 << ": N" << i << ": After Activation " << hidden_layers_[0][i]->getOutputValue() << std::endl;
 		}
 	}
 	// calculate all other hidden layer values
@@ -226,7 +226,7 @@ void NeuralNetwork::feedForward(std::vector<double> &input_values) {
 			}
 			hidden_layers_[i][j]->computeValue();
 			if (Options::debug) {
-				std::cout << "H" << i << ": N" << j << ": After Activation " << hidden_layers_[i][j]->getComputedValue() << std::endl;
+				std::cout << "H" << i << ": N" << j << ": After Activation " << hidden_layers_[i][j]->getOutputValue() << std::endl;
 			}
 		}
 	}
@@ -241,7 +241,7 @@ void NeuralNetwork::feedForward(std::vector<double> &input_values) {
 	}
 	output_layer_->computeValue();
 	if (Options::debug) {
-		std::cout << "O N: " << 0 << ": After Activation " << output_layer_->getComputedValue() << std::endl;
+		std::cout << "O N: " << 0 << ": After Activation " << output_layer_->getOutputValue() << std::endl;
 	}
 }
 
@@ -254,11 +254,12 @@ void NeuralNetwork::backPropagation(double target_value) {
 
 	// calculate error
 	double error = target_value - output_layer_->getOutputValue();
+	std::cout << "Error is " << error << std::endl;
 	if (Options::debug) {
 		std::cout << "Error is " << error << std::endl;
 	}
 	// tanh derivative of output layer output value
-	double deriv_output = output_layer_->tangentDerivative();
+	double deriv_output = (1.0 - tanh(output_layer_->getOutputValue()) * tanh(output_layer_->getOutputValue()));
 	//std::cout << "output tangent derivative is " << deriv_output << std::endl;
 
 	// calculate output layer deltas	
