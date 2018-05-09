@@ -259,7 +259,7 @@ void NeuralNetwork::backPropagation(double target_value) {
 		std::cout << "Error is " << error << std::endl;
 	}
 	// tanh derivative of output layer output value
-	double deriv_output = (1.0 - tanh(output_layer_->getOutputValue()) * tanh(output_layer_->getOutputValue()));
+	double deriv_output = (target_value - output_layer_->getOutputValue() * output_layer_->getOutputValue());
 	//std::cout << "output tangent derivative is " << deriv_output << std::endl;
 
 	// calculate output layer deltas	
