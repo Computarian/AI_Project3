@@ -14,7 +14,6 @@ class NeuralNetwork {
 
 public:
 	NeuralNetwork();
-
 	void readData();
 	std::vector<std::vector<double>> getData();
 	std::vector<int> getClasses();
@@ -29,10 +28,11 @@ public:
 	// test neural net by using feed forward after training and classifying output
 	void testNeuralNet(std::vector<double> &input_values, int actual_class);
 
-	void getResults();
+	void initializeStats();
 
 	void printNetwork();
 	void printData();
+	void printStats();
 
 private:
 	int num_inputs_;
@@ -40,13 +40,18 @@ private:
 	int num_hidden_layers_;
 	int total_layers_; 
 	int sum_data_;
+	static int correct_guesses_;
+	static int total_guesses_;
 
+	// neural net layers
 	std::vector<Neuron*> input_layer_;
 	Neuron* output_layer_;
 	std::vector<std::vector<Neuron*>> hidden_layers_;
+	// data set
 	std::vector<std::vector<double>> data_set_;
 	std::vector<int> classes_;
 	std::vector<double> target_values_;
+	// delta values
 	std::vector<double> delta_output_;
 	std::vector<std::vector<std::vector<double>>> delta_hidden_;
 	std::vector<std::vector<double>> delta_input_;

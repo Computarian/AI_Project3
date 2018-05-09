@@ -26,7 +26,6 @@ public:
 	void computeValue();
 	int classify();
 
-	double calculateDerivative();
 	double tangentDerivative();
 	int getNumberOfSynapses();
 
